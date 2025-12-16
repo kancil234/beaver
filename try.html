@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bebras Competition with Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background: #0078d4;
+      color: white;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #timer {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      margin-left: 8px;
+    }
+    iframe {
+      width: 100%;
+      height: 85vh;
+      border: none;
+      
+    }
+    button {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #0078d4;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div id="controls">
+      <button id="startBtn">Start</button>
+      <button id="pauseBtn" disabled>Pause</button>
+      <div id="timer">45:00</div>
+    </div>
+    <h1 style="margin:0;">Bebras UK Competition</h1>
+  </header>
+
+  <iframe 
+    id="competitionFrame"
+    src="https://www.bebras.uk/index.php?action=user_competition&grp_id=28594"
+    title="Bebras UK Competition">
+  </iframe>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const timerDisplay = document.getElementById('timer');
+    const iframe = document.getElementById('competitionFrame');
+    let countdown;
+    let timeRemaining = 45 * 60; // 45 minutes in seconds
+    let isPaused = false;
+
+    function updateTimerDisplay() {
+      let minutes = Math.floor(timeRemaining / 60);
+      let seconds = timeRemaining % 60;
+      timerDisplay.textContent = 
+        `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function startTimer() {
+      countdown = setInterval(() => {
+        if (!isPaused) {
+          timeRemaining--;
+          updateTimerDisplay();
+          if (timeRemaining <= 0) {
+            clearInterval(countdown);
+            timerDisplay.textContent = "Time's up!";
+            iframe.style.display = "none";
+            pauseBtn.disabled = true;
+          }
+        }
+      }, 1000);
+    }
+
+    startBtn.addEventListener('click', () => {
+      iframe.style.display = "block";
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      updateTimerDisplay();
+      startTimer();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      isPaused = !isPaused;
+      pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+    });
+  </script>
+</body>
+</html>
